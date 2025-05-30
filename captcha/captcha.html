@@ -5,7 +5,76 @@
   <title>Joel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style type="text/css" href="main.css"></style>
+  <style type="text/css">
+    html,
+    body {
+      background: pink;
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+    }
+
+    #captcha-container {
+      background: white;
+      width: 390px;
+      height: 300px;
+      overflow: hidden;
+    }
+    
+    #div_place {
+      display: flex;
+      flex-direction: column;
+      height: 90%;
+      margin: 5%;
+      justify-content: space-between;
+      background-image: url(BG.jpg);
+      background-size: cover;
+      cursor: none;
+      overflow: hidden;
+    }
+
+    #div_sky, #div_floor {
+      position: relative;
+      height: 40%;
+    }
+
+    #div_car {
+      position: absolute;
+      top: 50%;
+      width: 200px;
+      height: 100px;
+    }
+
+    #div_text {
+      position: absolute;
+      width: 100%;
+      top: 50%;
+      background: rgba(250, 250, 250, 0.8);
+      text-align: center;
+    }
+
+    #span_fail {
+      color: #a00;
+    }
+
+    #img_cursor {
+      position: absolute;
+      top: -100px;
+      left: -100px;
+      height: 25px;
+      pointer-events: none;
+    }
+
+    .pigeon {
+      position: absolute;
+      height: 32px;
+      width: 32px;
+      background: url('Generic_pigeon_animation.png');
+      background-position-y: -32px;
+      transform: scale(1.5);
+      offset-rotate: 0deg;
+    }
+  </style>
 </head>
 
 <body>
@@ -13,7 +82,7 @@
     <div id="div_place">
       <div id="div_sky"></div>
       <div id="div_floor"></div>
-      <canvas id="div_car"></canvas>
+      <img id="img_cursor" src="crosshair.png" />
     </div>
     <div id="div_text">
       <span id="span_text">Kill <span id="span_killCount"></span> pigeons before it's to late!</span>
@@ -21,6 +90,198 @@
     </div>
   </div>
 
-  <script type="text/javascript" src="main.js"></script>
+  <script type="text/javascript">
+    (function(window, document){
+      const divPlace = document.getElementById("div_place");
+      const divSky = document.getElementById("div_sky");
+      const divFloor = document.getElementById("div_floor");
+      const spanKillCount = document.getElementById("span_killCount");
+      const spanText = document.getElementById("span_text");
+      const spanFail = document.getElementById("span_fail");
+      const imgCursor = document.getElementById("img_cursor");
+      const maxCount = 300;
+      var killCount = 0;
+
+      function captchaSuccess() {
+        window.top.postMessage("success", '*');
+      }
+
+      function spawn(){
+        const modeList = [{mode: "fly", target: divSky}, {mode: "walk", target: divFloor}];
+        const randomModeIndex = getRandomInt(0, modeList.length - 1);
+
+        spawnPigeon(modeList[randomModeIndex].target, modeList[randomModeIndex].mode, getRandomInt(-50, 0), getRandomInt(0,200), 100);
+      }
+
+      function spawnPigeon(target, mode, maxHeight, minHeight, poopInterval) {
+        var pPigeon = document.createElement("p");
+
+        pPigeon.classList.add("pigeon");
+
+        animatePigeon(pPigeon, mode, maxHeight, minHeight, poopInterval);
+
+        target.appendChild(pPigeon);
+      }
+
+      function animatePigeon(target, mode, maxHeight, minHeight, poopInterval) {
+        var    position = 0;
+        var    size = 32;
+        var    spriteCount = 3;
+        const  interval = 100;
+        const  intervalMove = 50; 
+        const  svgPath = randomPath(390, 20, maxHeight, minHeight);
+        let startDirection = Math.round(Math.random()) * 2 - 1;
+
+        switch(mode) {
+          case "fly":
+            spriteCount = 4;
+            target.style.backgroundPositionY = '0px'; 
+            break;
+          case "walk":
+            target.style.backgroundPositionY = '-32px'; 
+            break;
+        }
+
+        target.style.offsetPath = svgPath;
+        target.style.offsetDistance = (startDirection > 0 ? 50 : 0) + "%";
+
+        target.AnimationID = setInterval(function () {
+          if (position < 32 * spriteCount)
+            position += 32;
+          else
+            position = 0; 
+
+          target.style.backgroundPositionX = `-${position}px`; 
+        }, interval); 
+
+        target.AnimationMoveID = setInterval(function () {
+          let distance = target.style.offsetDistance.replace("%", "") * 1 + .2;
+
+          if(Math.floor(distance / 50) % 2 == 0) 
+            target.style.transform = "scaleY(1.5) scaleX(-1.5)";
+          else
+            target.style.transform = "scaleY(1.5) scaleX(1.5)";
+
+          target.style.offsetDistance = distance + "%";
+        }, intervalMove); 
+
+        target.addEventListener("click", function() {
+          clearInterval(target.AnimationID);
+          clearInterval(target.AnimationMoveID);
+          target.remove();
+
+          pigeonKilled();
+        });
+
+        target.addEventListener("terminate", function() {
+          clearInterval(target.AnimationID);
+          clearInterval(target.AnimationMoveID);
+          target.remove();
+        });
+      }     
+
+      function randomPath(width, step, minSpread, maxSpread) {
+        let pointString = "";
+        var currentWidth = step * -2;
+
+        while(currentWidth < width + step * 2){
+          pointString += ` L${getRandomInt(currentWidth, currentWidth + step)},${getRandomInt(minSpread, maxSpread)}`;
+
+          currentWidth += step;
+        }
+
+        pointString += `L${width + step * 2},${getRandomInt(minSpread, maxSpread)}`;
+
+        while(currentWidth + step * 2 > 0){
+          pointString += ` L${getRandomInt(currentWidth - step, currentWidth)},${getRandomInt(minSpread, maxSpread)}`;
+
+          currentWidth -= step;
+        }
+
+        return `path('M-4,${getRandomInt(minSpread, maxSpread)} ${pointString} L-4,${getRandomInt(minSpread, maxSpread)} Z')`;
+      }
+
+      function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+      }
+
+      function pigeonKilled() {
+        killCount--;
+
+        spanKillCount.innerText = killCount;
+
+        if(killCount == 0)
+          captchaSuccess();
+        else {
+          triggerSpawn(false);
+          triggerSpawn(false);
+        }
+      }
+
+      function moveCursor(event){
+        var eventDoc, doc, body;
+
+        event = event || window.event;
+        eventDoc = (event.target && event.target.ownerDocument) || document;
+        
+        doc = eventDoc.documentElement;
+        body = eventDoc.body;
+        
+        var positionLeft = event.clientX +
+          (doc && doc.scrollLeft || body && body.scrollLeft || 0) -
+          (doc && doc.clientLeft || body && body.clientLeft || 0);
+        var positionTop = event.clientY +
+          (doc && doc.scrollTop  || body && body.scrollTop  || 0) -
+          (doc && doc.clientTop  || body && body.clientTop  || 0 );
+          
+        imgCursor.style.left = positionLeft - (imgCursor.width / 2) + "px";
+        imgCursor.style.top = positionTop - (imgCursor.height / 2) + "px";
+      }
+
+      function hideCursor() {
+        imgCursor.style.left = "-100px";
+        imgCursor.style.top = "-100px";
+      }
+
+      function reset() {
+        killCount = 100;
+
+        spanKillCount.innerText = killCount;
+        spanText.style.display = "inherit";
+        spanFail.style.display = "none";
+
+        let elements = document.getElementsByClassName("pigeon");
+        const elementsLength = elements.length;
+
+        for(var i = 0; i < elementsLength; i++) {
+          elements[0].dispatchEvent(new CustomEvent("terminate"));
+        };
+
+        triggerSpawn(true);
+      }
+
+      function triggerSpawn(recursive) {
+        var count = document.querySelectorAll(".pigeon").length;
+
+        if (count < maxCount) {
+          spawn();
+
+          if (recursive)
+            setTimeout(function() {triggerSpawn(recursive)}, getRandomInt(100, 1000));
+        }
+        else {
+          spanText.style.display = "none";
+          spanFail.style.display = "inherit";
+
+          setTimeout(reset, 3000);
+        }
+      }
+
+      divPlace.addEventListener("mousemove", moveCursor);
+      divPlace.addEventListener("mouseleave", hideCursor);
+
+      reset();
+    })(window, document);
+  </script>
 </body>
 </html>
