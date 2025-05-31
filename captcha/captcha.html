@@ -5,139 +5,140 @@
   <title>Joel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <script src="js/main.js" defer="defer"></script>
   <style type="text/css">
     html,
     body {
-      background: pink;
-      margin: 0;
-      padding: 0;
-      font-family: sans-serif;
-      overflow: hidden;
+        background: pink;
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+        overflow: hidden;
     }
 
     #captcha-container {
-      background: white;
-      width: 390px;
-      height: 300px;
-      overflow: hidden;
+        background: white;
+        width: 390px;
+        height: 300px;
+        overflow: hidden;
     }
-    
+
     #div_place {
-      display: flex;
-      flex-direction: column;
-      height: 90%;
-      margin: 5%;
-      justify-content: space-between;
-      background-image: url(BG.jpg);
-      background-size: cover;
-      cursor: none;
-      overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 90%;
+        margin: 5%;
+        justify-content: space-between;
+        background-image: url(BG.jpg);
+        background-size: cover;
+        cursor: none;
+        overflow: hidden;
     }
 
     #div_sky {
-      position: relative;
-      height: 40%;
-      z-index: 10;
+        position: relative;
+        height: 40%;
+        z-index: 10;
     }
 
     #div_floor {
-      position: relative;
-      height: 40%;
+        position: relative;
+        height: 40%;
     }
 
     #img_car_white {
-      filter: brightness(3);
+        filter: brightness(3);
     }
 
     .car {
-      position: absolute;
-      bottom: 10px;
-      left: 30%;
-      width: 120px;
-      pointer-events: none;
-      user-select: none;
+        position: absolute;
+        bottom: 10px;
+        left: 30%;
+        width: 120px;
+        pointer-events: none;
+        user-select: none;
     }
 
     .car[shake-level="1"] {
-      animation: horizontal-shaking 0.5s infinite;
+        animation: horizontal-shaking 0.5s infinite;
     }
 
     .car[shake-level="2"] {
-      animation: tilt-n-move-shaking 0.5s infinite;
+        animation: tilt-n-move-shaking 0.5s infinite;
     }
 
     .car[shake-level="3"] {
-      animation: tilt-n-move-shaking 0.15s infinite;
+        animation: tilt-n-move-shaking 0.15s infinite;
     }
 
     #div_text {
-      position: absolute;
-      width: 100%;
-      top: 50%;
-      background: rgba(250, 250, 250, 0.8);
-      text-align: center;
-      pointer-events: none;
-      user-select: none;
+        position: absolute;
+        width: 100%;
+        top: 50%;
+        background: rgba(250, 250, 250, 0.8);
+        text-align: center;
+        pointer-events: none;
+        user-select: none;
     }
 
     #span_killCount {
-      font-weight: bold;
-      color: blue;
+        font-weight: bold;
+        color: blue;
     }
 
     #span_fail {
-      color: #a00;
+        color: #a00;
     }
 
     #img_cursor {
-      position: absolute;
-      top: -100px;
-      left: -100px;
-      height: 25px;
-      pointer-events: none;
-      user-select: none;
+        position: absolute;
+        top: -100px;
+        left: -100px;
+        height: 25px;
+        pointer-events: none;
+        user-select: none;
     }
 
     .pigeon {
-      position: absolute;
-      height: 32px;
-      width: 32px;
-      background: url('Generic_pigeon_animation.png');
-      background-position-y: -32px;
-      transform: scale(1.5);
-      offset-rotate: 0deg;
+        position: absolute;
+        height: 32px;
+        width: 32px;
+        background: url('Generic_pigeon_animation.png');
+        background-position-y: -32px;
+        transform: scale(1.5);
+        offset-rotate: 0deg;
     }
 
     .particle {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 8px;
-      width: 8px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 8px;
+        width: 8px;
     }
 
     .particle_car {
-      background: url('Car.png');
+        background: url('Car.png');
     }
 
     .particle_poop {
-      background: url('Poop.png');
+        background: url('Poop.png');
     }
 
     @keyframes horizontal-shaking {
-      0% { transform: translateX(0) }
-      25% { transform: translateX(2px) }
-      50% { transform: translateX(-2px) }
-      75% { transform: translateX(2px) }
-      100% { transform: translateX(0) }
+        0% { transform: translateX(0) }
+        25% { transform: translateX(2px) }
+        50% { transform: translateX(-2px) }
+        75% { transform: translateX(2px) }
+        100% { transform: translateX(0) }
     }
 
     @keyframes tilt-n-move-shaking {
-      0% { transform: translate(0, 0) rotate(0deg); }
-      25% { transform: translate(2px, 2px) rotate(5deg); }
-      50% { transform: translate(0, 0) rotate(0deg); }
-      75% { transform: translate(-2px, 2px) rotate(-2deg); }
-      100% { transform: translate(0, 0) rotate(0deg); }
+        0% { transform: translate(0, 0) rotate(0deg); }
+        25% { transform: translate(2px, 2px) rotate(5deg); }
+        50% { transform: translate(0, 0) rotate(0deg); }
+        75% { transform: translate(-2px, 2px) rotate(-2deg); }
+        100% { transform: translate(0, 0) rotate(0deg); }
     }
   </style>
 </head>
@@ -157,334 +158,5 @@
       <span id="span_fail" style="display: none;">It's to late!</span>
     </div>
   </div>
-
-  <script type="text/javascript">
-    (function(window, document){
-      const divPlace = document.getElementById("div_place");
-      const divSky = document.getElementById("div_sky");
-      const divFloor = document.getElementById("div_floor");
-      const spanKillCount = document.getElementById("span_killCount");
-      const spanText = document.getElementById("span_text");
-      const spanFail = document.getElementById("span_fail");
-      const imgCursor = document.getElementById("img_cursor");
-      const imgCar = document.getElementById("img_car");
-      const imgCarWhite = document.getElementById("img_car_white");
-      const maxCount = 130;
-      var killCount = 0;
-
-      function captchaSuccess() {
-        window.top.postMessage("success", '*');
-      }
-
-      function collideWalk(target, distance){
-        if(collide(target, imgCar) && distance % 10 == 0){
-          var rect = target.getBoundingClientRect();
-          carHit(rect.left, rect.top - divFloor.offsetTop);
-        }
-      }
-
-
-      function makePoop(target, distance, poopInterval){
-        var hitCar = false;
-
-        if(!target.MoveID) {
-          target.MoveID = setInterval(function () {
-            var rect = target.getBoundingClientRect();
-            var particle = document.createElement("p");
-            var terminateFunc = function () {
-              clearInterval(particle.AnimationID);
-              particle.remove();
-            };
-
-            particle.classList.add("particle", "particle_poop");
-            particle.style.left = rect.left + "px";
-            particle.style.top = rect.top + "px";
-            particle.style.backgroundPositionX = `0px`; 
-            particle.style.backgroundPositionY = `${8 * getRandomInt(0, 3)}px`; 
-
-            particle.AnimationID = setInterval(function () {
-              if(!collide(target, divPlace) ) {
-                terminateFunc();
-              }
-
-              particle.style.top = particle.style.top.replace("px", "") * 1 + 2 + "px";
-
-              if(hitCar == false && collide(particle, imgCar)){
-                hitCar = true;
-
-                setTimeout(function(){
-                  particle.style.backgroundPositionX = `8px`; 
-                  particle.style.backgroundPositionY = `${8 * getRandomInt(0, 3)}px`; 
-                  imgCar.style.opacity = imgCar.style.opacity - 0.01;
-                  clearInterval(particle.AnimationID);
-
-                  setTimeout(function(){
-                    terminateFunc();
-                  }, getRandomInt(20000, 100000));
-                }, getRandomInt(200, 1000));
-              }
-            }, 50); 
-
-            divSky.appendChild(particle);
-          }, 4000); 
-        }
-      }
-
-      function spawn(){
-        const modeList = [
-          {mode: "fly", target: divSky, minHeight: [-20, 0], maxHeight: [0, 100], moveFunc: makePoop}, 
-          {mode: "fly", target: divSky, minHeight: [-20, 0], maxHeight: [0, 100], moveFunc: makePoop}, 
-          {mode: "walk", target: divFloor, minHeight: [50, 70], maxHeight: [90, 110], moveFunc: collideWalk}];
-        const randomModeIndex = getRandomInt(0, modeList.length - 1);
-        const modeData = modeList[randomModeIndex];
-
-        spawnPigeon(modeData.target, modeData.mode, getRandomInt(modeData.maxHeight[0], modeData.maxHeight[1]), getRandomInt(modeData.minHeight[0], modeData.minHeight[1]), modeData.moveFunc);
-      }
-
-      function spawnPigeon(target, mode, maxHeight, minHeight, moveFunc) {
-        var pPigeon = document.createElement("p");
-
-        pPigeon.classList.add("pigeon");
-
-        animatePigeon(pPigeon, mode, maxHeight, minHeight, moveFunc);
-
-        target.appendChild(pPigeon);
-      }
-
-      function animatePigeon(target, mode, maxHeight, minHeight, moveFunc) {
-        var    position = 0;
-        var    size = 32;
-        var    spriteCount = 3;
-        const  interval = 100;
-        const  intervalMove = 50; 
-        const  svgPath = randomPath(390, 20, maxHeight, minHeight);
-        let startDirection = Math.round(Math.random()) * 2 - 1;
-
-        switch(mode) {
-          case "fly":
-            spriteCount = 4;
-            target.style.backgroundPositionY = '0px'; 
-            break;
-          case "walk":
-            target.style.backgroundPositionY = '-32px'; 
-            break;
-        }
-
-        target.style.offsetPath = svgPath;
-        target.style.offsetDistance = (startDirection > 0 ? 50 : 0) + "%";
-
-        target.AnimationID = setInterval(function () {
-          if (position < 32 * spriteCount)
-            position += 32;
-          else
-            position = 0; 
-
-          target.style.backgroundPositionX = `-${position}px`; 
-        }, interval); 
-
-        target.AnimationMoveID = setInterval(function () {
-          let distance = target.style.offsetDistance.replace("%", "") * 1 + .2;
-
-          if(Math.floor(distance / 50) % 2 == 0) 
-            target.style.transform = "scaleY(1.5) scaleX(-1.5)";
-          else
-            target.style.transform = "scaleY(1.5) scaleX(1.5)";
-
-          target.style.offsetDistance = distance + "%";
-
-          if (moveFunc)
-            moveFunc(target, distance);
-        }, intervalMove); 
-
-        target.addEventListener("click", function() {
-          clearInterval(target.AnimationID);
-          clearInterval(target.AnimationMoveID);
-          clearInterval(target.MoveID);
-          target.remove();
-
-          pigeonKilled();
-        });
-
-        target.addEventListener("terminate", function() {
-          clearInterval(target.AnimationID);
-          clearInterval(target.AnimationMoveID);
-          clearInterval(target.MoveID);
-          target.remove();
-        });
-      }     
-
-      function pigeonKilled() {
-        killCount--;
-
-        spanKillCount.innerText = killCount;
-
-        if(killCount == 0)
-          captchaSuccess();
-        else {
-          triggerSpawn(false);
-          triggerSpawn(false);
-        }
-      }
-
-      function moveCursor(event){
-        var eventDoc, doc, body;
-
-        event = event || window.event;
-        eventDoc = (event.target && event.target.ownerDocument) || document;
-        
-        doc = eventDoc.documentElement;
-        body = eventDoc.body;
-        
-        var positionLeft = event.clientX +
-          (doc && doc.scrollLeft || body && body.scrollLeft || 0) -
-          (doc && doc.clientLeft || body && body.clientLeft || 0);
-        var positionTop = event.clientY +
-          (doc && doc.scrollTop  || body && body.scrollTop  || 0) -
-          (doc && doc.clientTop  || body && body.clientTop  || 0 );
-          
-        imgCursor.style.left = positionLeft - (imgCursor.width / 2) + "px";
-        imgCursor.style.top = positionTop - (imgCursor.height / 2) + "px";
-      }
-
-      function hideCursor() {
-        imgCursor.style.left = "-100px";
-        imgCursor.style.top = "-100px";
-      }
-
-      function reset() {
-        killCount = 100;
-
-        spanKillCount.innerText = killCount;
-        spanText.style.display = "inherit";
-        spanFail.style.display = "none";
-        imgCar.setAttribute("shake-level", "0");
-        imgCarWhite.setAttribute("shake-level", "0");
-
-        let elements = document.getElementsByClassName("pigeon");
-        const elementsLength = elements.length;
-
-        for(var i = 0; i < elementsLength; i++) {
-          elements[0].dispatchEvent(new CustomEvent("terminate"));
-        };
-
-        triggerSpawn(true);
-      }
-
-      function triggerSpawn(recursive) {
-        var count = document.querySelectorAll(".pigeon").length;
-
-        if (count < maxCount) {
-          spawn();
-
-          if (count > maxCount / 100 * 80) {
-            imgCar.setAttribute("shake-level", "3");
-            imgCarWhite.setAttribute("shake-level", "3");
-          }
-          else if (count > maxCount / 100 * 40) {
-            imgCar.setAttribute("shake-level", "2");
-            imgCarWhite.setAttribute("shake-level", "2");
-          }
-          else if (count > maxCount / 100 * 20) {
-            imgCar.setAttribute("shake-level", "1");
-            imgCarWhite.setAttribute("shake-level", "1");
-          }
-
-          if (recursive)
-            setTimeout(function() {triggerSpawn(recursive)}, getRandomInt(1000, 2000));
-        }
-        else {
-          spanText.style.display = "none";
-          spanFail.style.display = "inherit";
-
-          setTimeout(reset, 3000);
-        }
-      }
-
-      function carHit(x, y) {
-        var particle = document.createElement("p");
-        var svgPath = randomLine(x, y);
-        var particleX = getRandomInt(0, imgCar.width);
-        var particleY = getRandomInt(0, imgCar.height);
-        var terminateFunc = function () {
-          clearInterval(particle.AnimationID);
-          particle.remove();
-        };
-
-        particle.classList.add("particle", "particle_car");
-        particle.style.offsetPath = svgPath;
-        particle.style.offsetDistance = "0%";
-
-        particle.style.backgroundPositionX = `-${particleX}px`; 
-        particle.style.backgroundPositionY = `-${particleY}px`; 
-        
-        particle.AnimationID = setInterval(function () {
-          let distance = particle.style.offsetDistance.replace("%", "") * 1 + 4;
-
-          particle.style.offsetDistance = distance + "%";
-
-          if(distance > 100){
-            terminateFunc();
-          }
-        }, 100); 
-
-        divFloor.appendChild(particle);
-      }
-
-      function randomPath(width, step, minSpread, maxSpread) {
-        let pointString = "";
-        var currentWidth = step * -2;
-
-        while(currentWidth < width + step * 2){
-          pointString += ` L${getRandomInt(currentWidth, currentWidth + step)},${getRandomInt(minSpread, maxSpread)}`;
-
-          currentWidth += step;
-        }
-
-        pointString += `L${width + step * 2},${getRandomInt(minSpread, maxSpread)}`;
-
-        while(currentWidth + step * 2 > 0){
-          pointString += ` L${getRandomInt(currentWidth - step, currentWidth)},${getRandomInt(minSpread, maxSpread)}`;
-
-          currentWidth -= step;
-        }
-
-        return `path('M-4,${getRandomInt(minSpread, maxSpread)} ${pointString} L-4,${getRandomInt(minSpread, maxSpread)} Z')`;
-      }
-
-      function randomLine(startX, startY) {
-        let pointString = "";
-        const endX = getRandomInt(imgCar.width, imgCar.width * 2);
-        const endY = getRandomInt(imgCar.width, imgCar.height * 2);
-        const directionX = Math.round(Math.random()) * 2 - 1;
-        const directionY = Math.round(Math.random()) * 2 - 1;
-
-        return `path('M${startX},${startY} L${endX * directionX},${endY * directionY}')`;
-      }
-
-      function collide(element, target) {
-        var rect1 = element.getBoundingClientRect();
-        var rect2 = target.getBoundingClientRect();
-
-        return !(
-          rect1.top > rect2.bottom ||
-          rect1.right < rect2.left ||
-          rect1.bottom < rect2.top ||
-          rect1.left > rect2.right
-        );
-      }
-
-      function getRandomInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1) + min);
-      }
-
-      imgCar.addEventListener("click", function (event) {
-        carHit(imgCar.offsetLeft + event.offsetX, imgCar.offsetTop + event.offsetY - 10);
-      });
-      divPlace.addEventListener("mousemove", moveCursor);
-      divPlace.addEventListener("mouseleave", hideCursor);
-
-      reset();
-    })(window, document);
-  </script>
 </body>
 </html>
