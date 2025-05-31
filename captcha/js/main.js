@@ -11,7 +11,7 @@
 
     var fn = {
         MaxCount: 130,
-        KillCount: 100,
+        KillCount: 0,
         Init: function() {
             fn.KillCount = 100;
 
