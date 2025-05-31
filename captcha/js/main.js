@@ -31,7 +31,7 @@
                 elements[0].dispatchEvent(new CustomEvent("terminate"));
             };
             for(var i = 0; i < elementsPoopLength; i++) {
-                elementsPoopLength[0].dispatchEvent(new CustomEvent("terminate"));
+                elementsPoop[0].dispatchEvent(new CustomEvent("terminate"));
             };
 
             fn.Event.TriggerSpawn(true);
