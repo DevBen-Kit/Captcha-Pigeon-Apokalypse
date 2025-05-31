@@ -45,7 +45,11 @@
       height: 40%;
     }
 
-    #img_car {
+    #img_car_white {
+      filter: brightness(3);
+    }
+
+    .car {
       position: absolute;
       bottom: 10px;
       left: 30%;
@@ -54,15 +58,15 @@
       user-select: none;
     }
 
-    #img_car[shake-level="1"] {
+    .car[shake-level="1"] {
       animation: horizontal-shaking 0.5s infinite;
     }
 
-    #img_car[shake-level="2"] {
+    .car[shake-level="2"] {
       animation: tilt-n-move-shaking 0.5s infinite;
     }
 
-    #img_car[shake-level="3"] {
+    .car[shake-level="3"] {
       animation: tilt-n-move-shaking 0.15s infinite;
     }
 
@@ -143,7 +147,8 @@
     <div id="div_place">
       <div id="div_sky"></div>
       <div id="div_floor">
-        <img id="img_car" src="Car.png" shake-level="0" />
+        <img id="img_car_white" class="car" src="Car.png" shake-level="0" />
+        <img id="img_car" class="car" style="opacity: 1" src="Car.png" shake-level="0" />
       </div>
       <img id="img_cursor" src="crosshair.png" />
     </div>
@@ -163,6 +168,7 @@
       const spanFail = document.getElementById("span_fail");
       const imgCursor = document.getElementById("img_cursor");
       const imgCar = document.getElementById("img_car");
+      const imgCarWhite = document.getElementById("img_car_white");
       const maxCount = 130;
       var killCount = 0;
 
@@ -209,11 +215,12 @@
                 setTimeout(function(){
                   particle.style.backgroundPositionX = `8px`; 
                   particle.style.backgroundPositionY = `${8 * getRandomInt(0, 3)}px`; 
+                  imgCar.style.opacity = imgCar.style.opacity - 0.01;
                   clearInterval(particle.AnimationID);
 
                   setTimeout(function(){
                     terminateFunc();
-                  }, getRandomInt(2000, 10000));
+                  }, getRandomInt(20000, 100000));
                 }, getRandomInt(200, 1000));
               }
             }, 50); 
@@ -351,6 +358,7 @@
         spanText.style.display = "inherit";
         spanFail.style.display = "none";
         imgCar.setAttribute("shake-level", "0");
+        imgCarWhite.setAttribute("shake-level", "0");
 
         let elements = document.getElementsByClassName("pigeon");
         const elementsLength = elements.length;
@@ -370,12 +378,15 @@
 
           if (count > maxCount / 100 * 80) {
             imgCar.setAttribute("shake-level", "3");
+            imgCarWhite.setAttribute("shake-level", "3");
           }
           else if (count > maxCount / 100 * 40) {
             imgCar.setAttribute("shake-level", "2");
+            imgCarWhite.setAttribute("shake-level", "2");
           }
           else if (count > maxCount / 100 * 20) {
             imgCar.setAttribute("shake-level", "1");
+            imgCarWhite.setAttribute("shake-level", "1");
           }
 
           if (recursive)
